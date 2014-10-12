@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 /**
  * An {@link Activity} showing a tuggable "Hello World!" card.
@@ -71,6 +72,9 @@ public class MainActivity extends Activity {
             }
         });
         setContentView(mCardScroller);
+
+
+        Toast _test_toast = new Toast();
     }
 
     @Override
@@ -91,7 +95,7 @@ public class MainActivity extends Activity {
     private View buildView() {
         CardBuilder card = new CardBuilder(this, CardBuilder.Layout.TEXT);
 
-        card.setText(R.string.hello_world);
+        card.setText("Glass.Live");
         return card.getView();
     }
 
