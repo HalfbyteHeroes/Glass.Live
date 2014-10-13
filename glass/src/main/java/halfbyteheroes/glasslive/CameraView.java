@@ -2,63 +2,60 @@ package halfbyteheroes.glasslive;
 
 import android.content.Context;
 import android.hardware.Camera;
-import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.Toast;
 
-import java.io.IOException;
+public class CameraView extends SurfaceView implements SurfaceHolder.Callback
 
-/**
- * Created by dev on 13.10.14.
- */
-public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
-    private Camera _camera;
-    private Context _context;
+{
+    private SurfaceHolder _surface_holder = null;
+    private Camera _camera = null;
 
-    public CameraView(Context _context){
+    public CameraView(Context _context) {
         super(_context);
-        this._context = _context;
-    }
-
-    public CameraView(Context _context, AttributeSet _attributes){
-        super(_context, _attributes);
-        this._context = _context;
-    }
-
-    public CameraView(Context _context, AttributeSet _attributes, int _i1){
-        super(_context, _attributes, _i1);
-        this._context = _context;
+        _surface_holder = this.getHolder();
+        _surface_holder.addCallback(this);
+        _surface_holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder _holder) {
         _camera = Camera.open();
-        Camera.Parameters parameters = _camera.getParameters();
-        parameters.setPreviewFpsRange(30000, 30000);
-        _camera.setParameters(parameters);
+        this.setCameraParameters(_camera);
+        try {
+            _camera.setPreviewDisplay(_holder);
+        }
+        catch (Exception _ex) {
+            this.releaseCamera();
+        }
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder _holder, int _i1, int _i2, int _i3) {
-        if (_camera != null){
-            try {
-                _camera.setPreviewDisplay(_holder);
-                Toast _test_toast = Toast.makeText(_context,"holder set",Toast.LENGTH_LONG);
-                _test_toast.show();
-            } catch (IOException e) {
-                this.releaseCamera();
-            }
+    public void surfaceChanged(SurfaceHolder _holder, int _format, int _width, int _height) {
+        if (_camera != null) {
             _camera.startPreview();
         }
     }
 
     @Override
-    public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-        _camera.release();
+    public void surfaceDestroyed(SurfaceHolder _holder) {
+        this.releaseCamera();
     }
 
-    private void releaseCamera() {
-        _camera.release();
+    public void setCameraParameters(Camera _camera) {
+        if (_camera != null) {
+            Camera.Parameters parameters = _camera.getParameters();
+            parameters.setPreviewFpsRange(30000, 30000);
+            // 640 x 360
+            parameters.setPreviewSize(640,360);
+            _camera.setParameters(parameters);
+        }
+    }
+
+    public void releaseCamera() {
+        if (_camera != null) {
+            _camera.release();
+            _camera = null;
+        }
     }
 }
