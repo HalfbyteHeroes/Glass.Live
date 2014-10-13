@@ -9,6 +9,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -71,10 +73,11 @@ public class MainActivity extends Activity {
                 am.playSoundEffect(Sounds.DISALLOWED);
             }
         });
-        setContentView(mCardScroller);
+        this.setContentView(mCardScroller);
 
 
-        Toast _test_toast = new Toast();
+        Toast _test_toast = Toast.makeText(getApplicationContext(),"Gestartet",Toast.LENGTH_LONG);
+        _test_toast.show();
     }
 
     @Override
@@ -96,6 +99,11 @@ public class MainActivity extends Activity {
         CardBuilder card = new CardBuilder(this, CardBuilder.Layout.TEXT);
 
         card.setText("Glass.Live");
+
+        //SurfaceView _test_panel = new SurfaceView()
+        CameraView _camera_preview = new CameraView(getApplicationContext());
+        _camera_preview.findViewById(R.drawable.ic_launcher);
+
         return card.getView();
     }
 
