@@ -7,11 +7,16 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.format.Formatter;
+import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import net.majorkernelpanic.streaming.MediaStream;
 import net.majorkernelpanic.streaming.Session;
@@ -19,6 +24,7 @@ import net.majorkernelpanic.streaming.SessionBuilder;
 import net.majorkernelpanic.streaming.audio.AudioQuality;
 import net.majorkernelpanic.streaming.gl.SurfaceView;
 import net.majorkernelpanic.streaming.rtsp.RtspClient;
+import net.majorkernelpanic.streaming.rtsp.RtspServer;
 import net.majorkernelpanic.streaming.video.VideoQuality;
 
 import java.util.regex.Matcher;
@@ -32,6 +38,7 @@ public class MainActivity extends Activity implements
 
     private final static String TAG = "MainActivity";
     private SurfaceView mSurfaceView;
+    private SurfaceView mServerView;
     private Session mSession;
     private RtspClient mClient;
 
@@ -58,6 +65,31 @@ public class MainActivity extends Activity implements
         mSurfaceView.getHolder().addCallback(this);
         // H264: 352, 288, 30, 300000
         mSession.setVideoQuality(new VideoQuality(1280, 720, 30, 500000));
+
+        this.setTitle("Glass.Live | Server-IP: " + this.displayConnectString());
+
+
+
+    }
+
+    @Override
+    public boolean onKeyDown(int keycode, KeyEvent event) {
+        if (keycode == KeyEvent.KEYCODE_DPAD_CENTER) {
+            // user tapped touchpad, do something
+            mClient.startStream();
+            return true;
+        }
+        return super.onKeyDown(keycode, event);
+    }
+
+
+    private String displayConnectString() {
+        WifiManager wifiMgr = (WifiManager) getSystemService(WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+        int ip = wifiInfo.getIpAddress();
+        String ipAddress = Formatter.formatIpAddress(ip);
+        Toast.makeText(getApplicationContext(), ipAddress, Toast.LENGTH_LONG).show();
+        return ipAddress;
     }
 
     @Override
@@ -107,6 +139,7 @@ public class MainActivity extends Activity implements
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
+
         mSession.startPreview();
         //mClient.setCredentials(mEditTextUsername.getText().toString(), mEditTextPassword.getText().toString());
         mClient.setServerAddress("192.168.43.95", 1935);
