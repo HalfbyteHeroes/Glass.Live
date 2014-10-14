@@ -45,7 +45,7 @@ public class MainActivity extends Activity implements
                 .setContext(getApplicationContext())
                 .setAudioEncoder(SessionBuilder.AUDIO_AAC)
                 .setAudioQuality(new AudioQuality(8000,16000))
-                .setVideoEncoder(SessionBuilder.VIDEO_H263)
+                .setVideoEncoder(SessionBuilder.VIDEO_H264 )
                 .setSurfaceView(mSurfaceView)
                 .setPreviewOrientation(0)
                 .setCallback(this)
@@ -54,8 +54,10 @@ public class MainActivity extends Activity implements
         mClient.setSession(mSession);
         mClient.setCallback(this);
         mSurfaceView.setAspectRatioMode(SurfaceView.ASPECT_RATIO_PREVIEW);
+        mSession.getVideoTrack().setStreamingMethod(MediaStream.MODE_MEDIARECORDER_API);
         mSurfaceView.getHolder().addCallback(this);
-        mSession.setVideoQuality(new VideoQuality(1280, 720, 30, 4000));
+        // H264: 352, 288, 30, 300000
+        mSession.setVideoQuality(new VideoQuality(1280, 720, 30, 500000));
     }
 
     @Override
@@ -107,8 +109,8 @@ public class MainActivity extends Activity implements
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         mSession.startPreview();
         //mClient.setCredentials(mEditTextUsername.getText().toString(), mEditTextPassword.getText().toString());
-        mClient.setServerAddress("127.0.0.1", 1234);
-        mClient.setStreamPath("/test.rtsp");
+        mClient.setServerAddress("192.168.43.95", 1935);
+        mClient.setStreamPath("/live/test");
         mClient.startStream();
     }
 
