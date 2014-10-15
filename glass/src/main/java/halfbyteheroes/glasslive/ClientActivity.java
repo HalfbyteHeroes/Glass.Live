@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import net.majorkernelpanic.streaming.MediaStream;
@@ -30,7 +32,7 @@ import net.majorkernelpanic.streaming.video.VideoQuality;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MainActivity extends Activity implements
+public class ClientActivity extends Activity implements
         RtspClient.Callback,
         Session.Callback,
         SurfaceHolder.Callback {
@@ -66,20 +68,22 @@ public class MainActivity extends Activity implements
         // H264: 352, 288, 30, 300000
         mSession.setVideoQuality(new VideoQuality(1280, 720, 30, 500000));
 
-        this.setTitle("Glass.Live | Server-IP: " + this.displayConnectString());
-
-
-
+        ((TextView)findViewById(R.id.info_label)).setText("");
+        ((SurfaceView)findViewById(R.id.camera_surface)).setBackgroundColor(Color.TRANSPARENT);
+        Toast.makeText(getApplicationContext(), "swipe down to exit the RTSP client", Toast.LENGTH_LONG);
+        this.setTitle("Glass.Live | RTSP client");
     }
 
     @Override
     public boolean onKeyDown(int keycode, KeyEvent event) {
-        if (keycode == KeyEvent.KEYCODE_DPAD_CENTER) {
-            // user tapped touchpad, do something
-            mClient.startStream();
-            return true;
+        switch(keycode) {
+            case KeyEvent.KEYCODE_BACK:
+                /* close the application */
+                this.finish();
+                return true;
+
+            default: return super.onKeyDown(keycode, event);
         }
-        return super.onKeyDown(keycode, event);
     }
 
 
@@ -88,7 +92,7 @@ public class MainActivity extends Activity implements
         WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
         int ip = wifiInfo.getIpAddress();
         String ipAddress = Formatter.formatIpAddress(ip);
-        Toast.makeText(getApplicationContext(), ipAddress, Toast.LENGTH_LONG).show();
+        Toast.makeText(this.getApplicationContext(), ipAddress, Toast.LENGTH_LONG).show();
         return ipAddress;
     }
 
@@ -100,6 +104,15 @@ public class MainActivity extends Activity implements
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mClient.stopStream();
+        mClient.release();
+        mSession.stop();
+        mSession.release();
     }
 
     @Override

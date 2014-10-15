@@ -30,7 +30,7 @@ import net.majorkernelpanic.streaming.gl.SurfaceView;
 import net.majorkernelpanic.streaming.rtsp.RtspClient;
 import net.majorkernelpanic.streaming.rtsp.RtspServer;
 import net.majorkernelpanic.streaming.video.VideoQuality;
-public class MainActivityDebug extends Activity implements SurfaceHolder.Callback, Session.Callback {
+public class ServerActivity extends Activity implements SurfaceHolder.Callback, Session.Callback {
 
     private int mRtspPort = -1;
     Session mSession;
@@ -77,7 +77,11 @@ public class MainActivityDebug extends Activity implements SurfaceHolder.Callbac
         bindService(new Intent(this, RtspServer.class), mRtspServerConnection, Context.BIND_AUTO_CREATE);
 
         ((TextView)findViewById(R.id.info_label)).setText("Waiting for RTSP connection to "+this.getConnectString()+":1234");
+        Toast.makeText(this.getApplicationContext(), "swipe down to exit the RTSP server", Toast.LENGTH_LONG);
+        this.setTitle("Glass.Live | RTSP server");
     }
+
+
 
     @Override
     public void onResume() {
@@ -90,6 +94,8 @@ public class MainActivityDebug extends Activity implements SurfaceHolder.Callbac
     public void onDestroy() {
         super.onDestroy();
         unbindService(mRtspServerConnection);
+        mSession.stop();
+        mSession.release();
     }
 
     @Override
@@ -148,5 +154,17 @@ public class MainActivityDebug extends Activity implements SurfaceHolder.Callbac
         int ip = wifiInfo.getIpAddress();
         String ipAddress = Formatter.formatIpAddress(ip);
         return ipAddress;
+    }
+
+    @Override
+    public boolean onKeyDown(int keycode, KeyEvent event) {
+        switch(keycode) {
+            case KeyEvent.KEYCODE_BACK:
+                /* close the application */
+                this.finish();
+                return true;
+
+            default: return super.onKeyDown(keycode, event);
+        }
     }
 }

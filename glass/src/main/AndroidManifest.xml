@@ -23,30 +23,37 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name=".ClientActivity"
             android:icon="@drawable/ic_glass_logo"
             android:label="@string/title_activity_main" >
             <intent-filter>
-                <action android:name="com.google.android.glass.action.VOICE_TRIGGER" />
+                <action android:name="android.intent.action.MAIN" />
             </intent-filter>
-
-            <meta-data
-                android:name="com.google.android.glass.VoiceTrigger"
-                android:resource="@xml/voice_trigger" />
         </activity>
         <activity
-            android:name=".MainActivityDebug"
+            android:name=".ServerActivity"
             android:icon="@drawable/ic_glass_logo"
             android:label="@string/title_activity_main" >
             <intent-filter>
-                <action android:name="com.google.android.glass.action.VOICE_TRIGGER" />
+                <action android:name="android.intent.action.MAIN" />
             </intent-filter>
+        </activity>
 
+        <service android:name="net.majorkernelpanic.streaming.rtsp.RtspServer" />
+
+        <activity
+            android:name=".ChooserActivity"
+            android:icon="@drawable/ic_glass_logo"
+            android:label="Glass.Live" >
+            <intent-filter>
+                <action android:name="com.google.android.glass.action.VOICE_TRIGGER" />
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
             <meta-data
                 android:name="com.google.android.glass.VoiceTrigger"
                 android:resource="@xml/voice_trigger" />
         </activity>
-        <service android:name="net.majorkernelpanic.streaming.rtsp.RtspServer"/>
     </application>
 
 </manifest>

@@ -1,0 +1,23 @@
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@android:color/black">
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:text="start RTSP client"
+        android:id="@+id/start_client_button"
+        android:layout_margin="10dp"
+        android:layout_weight="1" />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:text="start RTSP server"
+        android:id="@+id/start_server_button"
+        android:layout_margin="10dp"
+        android:layout_weight="1" />
+</LinearLayout>
