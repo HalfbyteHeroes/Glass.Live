@@ -35,6 +35,7 @@ public class ChooserActivity extends Activity {
         _start_client_button = (Button)findViewById(R.id.start_client_button);
         _start_server_button = (Button)findViewById(R.id.start_server_button);
         _gesture_detector = createGestureDetector(this);
+        _start_server_button.requestFocus();
     }
 
     private GestureDetector createGestureDetector(Context context) {
@@ -55,11 +56,13 @@ public class ChooserActivity extends Activity {
                     return true;
                 } else if (gesture == Gesture.SWIPE_RIGHT) {
                     /* choose upper button */
+                    checkFocus();
                     if(_start_server_button.isFocused()) _start_client_button.requestFocus();
                     else _start_server_button.requestFocus();
                     return true;
                 } else if (gesture == Gesture.SWIPE_LEFT) {
                     /* choose lower button */
+                    checkFocus();
                     if(_start_client_button.isFocused()) _start_server_button.requestFocus();
                     else _start_client_button.requestFocus();
                     return true;
@@ -68,6 +71,10 @@ public class ChooserActivity extends Activity {
             }
         });
         return gestureDetector;
+    }
+
+    private void checkFocus() {
+        if(!(_start_client_button.hasFocus() && _start_client_button.hasFocus())) _start_server_button.requestFocus();
     }
 
     @Override
